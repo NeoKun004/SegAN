@@ -7,9 +7,11 @@ from torchvision.transforms import Compose, CenterCrop, Normalize, ToTensor
 from transform import ReLabel, ToLabel, Scale, HorizontalFlip, VerticalFlip, ColorJitter
 import random
 
+
 def makedirs(path):
     if not os.path.exists(path):
         os.makedirs(path)
+
 
 class Dataset(torch.utils.data.Dataset):
 
@@ -155,14 +157,13 @@ class Dataset_val(torch.utils.data.Dataset):
         return len(self.input_paths)
 
 
-
 def loader(dataset, batch_size, num_workers=8, shuffle=True):
 
     input_images = dataset
 
     input_loader = torch.utils.data.DataLoader(dataset=input_images,
-                                                batch_size=batch_size,
-                                                shuffle=shuffle,
-                                                num_workers=num_workers)
+                                               batch_size=batch_size,
+                                               shuffle=shuffle,
+                                               num_workers=num_workers)
 
     return input_loader
