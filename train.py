@@ -118,7 +118,7 @@ def main(batch_size, n_epochs, lr, beta1, decay, _run):
 
             for d in range(3):
                 outputs_masked[:, d, :, :] = inputs_mask[:, d, :, :].unsqueeze(1) * outputs
-            outputs_masked = outputs_masked.to_device
+            outputs_masked = outputs_masked.cuda()
 
             results = c_model(outputs_masked)
             targets_masked = input.clone()
