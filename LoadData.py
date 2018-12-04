@@ -1,11 +1,11 @@
 import os
-import numpy as np
+import torch
+import random
+
 from glob import glob
 from PIL import Image
-import torch
 from torchvision.transforms import Compose, CenterCrop, Normalize, ToTensor
 from transform import ReLabel, ToLabel, Scale, HorizontalFlip, VerticalFlip, ColorJitter
-import random
 
 
 def makedirs(path):

@@ -73,6 +73,8 @@ class SummaryWriter:
 
 @ex.automain
 def main(batch_size, n_epochs, lr, beta1, decay, _run):
+    assert torch.cuda.is_available()
+
     writer = SummaryWriter(os.path.join(base_path, "runs", "experiment-{}".format(_run._id)))
     model_path = os.path.join(fs_observer.dir, "best_model.pth")
 
@@ -80,12 +82,9 @@ def main(batch_size, n_epochs, lr, beta1, decay, _run):
     if not os.path.exists(outputs_path):
         os.mkdir(outputs_path)
 
-    use_cuda = torch.cuda.is_available()
-    device = torch.device("cuda" if use_cuda else "cpu")
-
     cudnn.benchmark = True
-    s_model = SegmentorNet().to(device)
-    c_model = CriticNet().to(device)
+    s_model = SegmentorNet().cuda()
+    c_model = CriticNet().cuda()
 
     s_optimizer = optim.Adam(s_model.parameters(), lr=lr, betas=(beta1, 0.999))
     c_optimizer = optim.Adam(c_model.parameters(), lr=lr, betas=(beta1, 0.999))
@@ -108,8 +107,8 @@ def main(batch_size, n_epochs, lr, beta1, decay, _run):
         for i, (inputs, targets) in enumerate(progress_bar):
             c_model.zero_grad()
 
-            inputs = Variable(inputs).to(device)
-            targets = Variable(targets).to(device).type(torch.FloatTensor).to(device)
+            inputs = Variable(inputs).cuda()
+            targets = Variable(targets).cuda().type(torch.FloatTensor).cuda()
 
             outputs = s_model(inputs)
             outputs = F.sigmoid(outputs)
@@ -129,7 +128,7 @@ def main(batch_size, n_epochs, lr, beta1, decay, _run):
             for d in range(3):
                 targets_masked[:, d, :, :] = inputs_mask[:, d, :, :].unsqueeze(1) * targets
 
-            targets_masked = targets_masked.to(device)
+            targets_masked = targets_masked.cuda()
             targets_D = c_model(targets_masked)
             loss_D = - torch.mean(torch.abs(results - targets_D))
             loss_D.backward()
@@ -144,12 +143,12 @@ def main(batch_size, n_epochs, lr, beta1, decay, _run):
 
             for d in range(3):
                 outputs_masked[:, d, :, :] = inputs_mask[:, d, :, :].unsqueeze(1) * outputs
-            outputs_masked = outputs_masked.to(device)
+            outputs_masked = outputs_masked.cuda()
 
             results = c_model(outputs_masked)
             for d in range(3):
                 targets_masked[:, d, :, :] = inputs_mask[:, d, :, :].unsqueeze(1) * targets
-            targets_masked = targets_masked.to(device)
+            targets_masked = targets_masked.cuda()
 
             targets_G = c_model(targets_masked)
             loss_dice = dice_loss(outputs, targets)
@@ -192,8 +191,8 @@ def main(batch_size, n_epochs, lr, beta1, decay, _run):
             s_model.eval()
             IoUs, dices = [], []
             for i, (inputs, targets) in enumerate(progress_bar):
-                inputs = Variable(inputs).to(device)
-                targets = Variable(targets).to(device)
+                inputs = Variable(inputs).cuda()
+                targets = Variable(targets).cuda()
 
                 pred = s_model(inputs)
                 pred[pred < 0.5] = 0
