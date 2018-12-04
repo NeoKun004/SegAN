@@ -157,10 +157,10 @@ def main(batch_size, n_epochs, lr, beta1, decay, _run):
             loss_G_joint.backward()
             s_optimizer.step()
 
-            c_losses.append(loss_D.item())
-            s_losses.append(loss_G.item())
-            s_losses_joint.append(loss_G_joint.item())
-            dices.append(loss_dice.item())
+            c_losses.append(loss_D.data[0])
+            s_losses.append(loss_G.data[0])
+            s_losses_joint.append(loss_G_joint.data[0])
+            dices.append(loss_dice.data[0])
 
             progress_bar.set_postfix(OrderedDict({
                 "c_loss": np.mean(c_losses),
