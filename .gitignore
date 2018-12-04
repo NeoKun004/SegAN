@@ -1,0 +1,13 @@
+.DS_Store
+.idea/
+.env
+.segan-env
+
+__pycache__/
+*.pyc
+.cache
+*.ipynb
+
+results/*
+runs/*
+*.yaml

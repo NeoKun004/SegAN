@@ -1,0 +1,11 @@
+# Pytorch 0.2 is required. Use it with CUDA 8.0
+# pip install http://download.pytorch.org/whl/cu80/cu80/torch-0.2.0.post3-cp27-cp27m-manylinux1_x86_64.whl
+
+numpy
+sacred
+scikit-image
+Pillow
+pyyaml
+torchvision
+tensorboardX
+tqdm
