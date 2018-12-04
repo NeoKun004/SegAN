@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import os
+import json
 import numpy as np
 import random
 import torch
@@ -9,7 +10,6 @@ import torch.backends.cudnn as cudnn
 import torch.nn.functional as F
 
 from collections import OrderedDict
-from tensorboardX import SummaryWriter
 from torch.autograd import Variable
 from tqdm import tqdm
 from sacred import Experiment
@@ -50,6 +50,25 @@ def dice_loss(input_, target):
     dice_total = 1 - 1 * torch.sum(dice) / dice.size(0)  # divide by batch size
 
     return dice_total
+
+
+class SummaryWriter:
+    def __init__(self, dir):
+        if not os.path.exists(dir):
+            os.makedirs(dir)
+
+        self.dir = dir
+        self.dict = {}
+
+    def add_scalar(self, tag, value, key):
+        if tag not in self.dict:
+            self.dict[tag] = {}
+
+        self.dict[tag][key] = value
+
+    def commit(self):
+        with open(os.path.join(self.dir, "writer.json"), "w+") as f:
+            json.dump(self.dict, f)
 
 
 @ex.automain
@@ -165,6 +184,7 @@ def main(batch_size, n_epochs, lr, beta1, decay, _run):
         writer.add_scalar(s_loss_tag, mean_s_loss, epoch)
         writer.add_scalar(s_losses_joint_tag, mean_s_loss_joint, epoch)
         writer.add_scalar(dice_loss_tag, mean_dice, epoch)
+        writer.commit()
 
         if epoch % 10 == 0:
             progress_bar = tqdm(dataloaders["validation"], desc="Epoch {} - validation".format(epoch))
@@ -201,6 +221,13 @@ def main(batch_size, n_epochs, lr, beta1, decay, _run):
                 "mIoU": np.mean(mIoU),
                 "mDice": np.mean(mDice)
             }))
+
+            miou_tag = "validation.miou"
+            mdice_tag = "validation.mdice"
+
+            writer.add_scalar(miou_tag, mIoU, epoch)
+            writer.add_scalar(mdice_tag, mDice, epoch)
+            writer.commit()
 
             if mIoU > best_IoU:
                 best_IoU = mIoU

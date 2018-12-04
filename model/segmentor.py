@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 from math import sqrt
 
-from base import GlobalConvBlock, ResidualBlock, ResidualBlock_D, CHANNEL_DIM, NDF
+from .base import GlobalConvBlock, ResidualBlock, ResidualBlock_D, CHANNEL_DIM, NDF
 
 
 class SegmentorNet(nn.Module):

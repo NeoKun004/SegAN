@@ -3,7 +3,7 @@ import torch.nn as nn
 
 from math import sqrt
 
-from base import GlobalConvBlock, ResidualBlock, ResidualBlock_D, CHANNEL_DIM, NDF
+from .base import GlobalConvBlock, ResidualBlock, ResidualBlock_D, CHANNEL_DIM, NDF
 
 
 class CriticNet(nn.Module):
