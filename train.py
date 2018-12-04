@@ -209,16 +209,16 @@ def main(batch_size, n_epochs, lr, beta1, decay, _run):
                     IoUs.append(IoU)
                     dices.append(dice)
 
+                progress_bar.set_postfix(OrderedDict({
+                    "mIoU": np.mean(IoUs, axis=0),
+                    "mDice": np.mean(dices, axis=0)
+                }))
+
             s_model.train()
             IoUs = np.array(IoUs, dtype=np.float64)
             dices = np.array(dices, dtype=np.float64)
             mIoU = np.mean(IoUs, axis=0)
             mDice = np.mean(dices, axis=0)
-
-            progress_bar.set_postfix(OrderedDict({
-                "mIoU": np.mean(mIoU),
-                "mDice": np.mean(mDice)
-            }))
 
             miou_tag = "validation.miou"
             mdice_tag = "validation.mdice"
