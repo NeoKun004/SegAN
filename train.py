@@ -121,7 +121,7 @@ def main(batch_size, n_epochs, lr, beta1, decay, _run):
             outputs_masked = outputs_masked.cuda()
 
             results = c_model(outputs_masked)
-            targets_masked = input.clone()
+            targets_masked = inputs.clone()
             for d in range(3):
                 targets_masked[:, d, :, :] = inputs_mask[:, d, :, :].unsqueeze(1) * targets
 
@@ -183,7 +183,6 @@ def main(batch_size, n_epochs, lr, beta1, decay, _run):
         writer.add_scalar(s_loss_tag, mean_s_loss, epoch)
         writer.add_scalar(s_losses_joint_tag, mean_s_loss_joint, epoch)
         writer.add_scalar(dice_loss_tag, mean_dice, epoch)
-        writer.commit()
 
         if epoch % 10 == 0:
             progress_bar = tqdm(dataloaders["validation"], desc="Epoch {} - validation".format(epoch))
