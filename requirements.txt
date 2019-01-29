@@ -7,3 +7,4 @@ Pillow
 pyyaml
 torchvision
 tqdm
+funcy
