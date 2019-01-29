@@ -107,7 +107,8 @@ def main(model_path, data_path, save_to):
         outputs = model(inputs)
 
         for output, fname, shape in zip(outputs, fnames, inputs_shape):
-            pil_image = to_pil_image(output.cpu() > 0.5)
+            resize = transforms.Resize(size=shape)
+            pil_image = resize(to_pil_image(output.cpu() > 0.5))
             pil_image.save(os.path.join(save_to, fname + ".png"))
 
 
