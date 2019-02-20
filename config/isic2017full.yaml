@@ -1,0 +1,7 @@
+batch_size: 25
+n_epochs: 500
+lr: 0.003
+beta1: 0.5
+decay: 0.9
+train_fpath: /workspace/SegAN/config/train_isic2017full.yaml
+val_fpath: /workspace/SegAN/config/validation_isic2017full.yaml

@@ -10,4 +10,3 @@ __pycache__/
 
 results/*
 runs/*
-*.yaml
