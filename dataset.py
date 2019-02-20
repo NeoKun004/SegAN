@@ -20,7 +20,6 @@ class SegANDataset(Dataset):
             augmentation = []
         n_augmentation = math.factorial(len(augmentation)) if len(augmentation) > 0 else 0
         augmentation_combinations = list(itertools.product([0, 1], repeat=n_augmentation))
-        print(augmentation_combinations)
 
         self.with_targets = with_targets
         self.size = (180, 135)
