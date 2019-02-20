@@ -14,7 +14,7 @@ from transform import ToLabel, ReLabel, Scale
 class SegANDataset(Dataset):
     def __init__(self, fpath, augmentation=None, with_targets=True):
         if not os.path.isfile(fpath):
-            raise FileNotFoundError(f"Could not find dataset file: '{fpath}'")
+            raise FileNotFoundError("Could not find dataset file: '{}'".format(fpath))
 
         if not augmentation:
             augmentation = []

@@ -1,6 +1,7 @@
 # Pytorch 0.2 is required. Use it with CUDA 8.0
 # pip install http://download.pytorch.org/whl/cu80/torch-0.2.0.post2-cp27-cp27mu-manylinux1_x86_64.whl
 
+matplotlib==2.1.0
 numpy
 sacred
 Pillow
