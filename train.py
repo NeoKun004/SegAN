@@ -178,7 +178,7 @@ def main(batch_size, n_epochs, lr, beta1, decay, train_fpath, val_fpath, _run):
 
             s_model.eval()
             IoUs, dices = [], []
-            for i, (inputs, targets) in enumerate(progress_bar):
+            for i, (inputs, targets, fname) in enumerate(progress_bar):
                 inputs = Variable(inputs).cuda()
                 targets = Variable(targets).cuda()
 
