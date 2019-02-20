@@ -1,7 +1,6 @@
 from __future__ import print_function
 
 import os
-import json
 import numpy as np
 import random
 import torch
@@ -11,13 +10,16 @@ import torch.nn.functional as F
 
 from collections import OrderedDict
 from torch.autograd import Variable
+from torch.utils import data
+from torchvision.transforms import RandomVerticalFlip, RandomHorizontalFlip
 from tqdm import tqdm
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
 
+from dataset import SegANDataset
 from model.critic import CriticNet
 from model.segmentor import SegmentorNet
-from LoadData import Dataset, loader, Dataset_val
+from summary_writer import SummaryWriter
 
 base_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -27,7 +29,7 @@ ex.observers.append(fs_observer)
 
 
 def set_seeds(worker_id):
-    seed = torch.initial_seed() % 2**31
+    seed = torch.initial_seed() % 2 ** 31
     np.random.seed(seed + 1)
     random.seed(seed + 2)
 
@@ -52,27 +54,8 @@ def dice_loss(input_, target):
     return dice_total
 
 
-class SummaryWriter:
-    def __init__(self, dir):
-        if not os.path.exists(dir):
-            os.makedirs(dir)
-
-        self.dir = dir
-        self.dict = {}
-
-    def add_scalar(self, tag, value, key):
-        if tag not in self.dict:
-            self.dict[tag] = {}
-
-        self.dict[tag][key] = value
-
-    def commit(self):
-        with open(os.path.join(self.dir, "writer.json"), "w+") as f:
-            json.dump(self.dict, f)
-
-
 @ex.automain
-def main(batch_size, n_epochs, lr, beta1, decay, _run):
+def main(batch_size, n_epochs, lr, beta1, decay, train_fpath, val_fpath, _run):
     assert torch.cuda.is_available()
 
     writer = SummaryWriter(os.path.join(base_path, "runs", "experiment-{}".format(_run._id)))
@@ -89,9 +72,15 @@ def main(batch_size, n_epochs, lr, beta1, decay, _run):
     s_optimizer = optim.Adam(s_model.parameters(), lr=lr, betas=(beta1, 0.999))
     c_optimizer = optim.Adam(c_model.parameters(), lr=lr, betas=(beta1, 0.999))
 
+    augmetation = [RandomHorizontalFlip(p=1.0),
+                   RandomVerticalFlip(p=1.0)]
+
+    train_dataset = SegANDataset(train_fpath, augmetation)
+    val_dataset = SegANDataset(val_fpath)
+
     dataloaders = {
-        "train": loader(Dataset('./'), batch_size),
-        "validation": loader(Dataset_val('./'), 36)
+        "train": data.DataLoader(train_dataset, batch_size=batch_size, num_workers=8, shuffle=True),
+        "validation": data.DataLoader(val_dataset, batch_size=batch_size, num_workers=8, shuffle=False)
     }
 
     best_IoU = 0.0
