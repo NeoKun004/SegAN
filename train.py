@@ -85,7 +85,7 @@ def main(batch_size, n_epochs, lr, beta1, decay, train_fpath, val_fpath, _run):
 
     best_IoU = 0.0
     s_model.train()
-    for epoch in range(n_epochs):
+    for epoch in range(1, n_epochs + 1):
         progress_bar = tqdm(dataloaders["train"], desc="Epoch {} - train".format(epoch))
 
         s_losses = []
@@ -93,7 +93,7 @@ def main(batch_size, n_epochs, lr, beta1, decay, train_fpath, val_fpath, _run):
         c_losses = []
         dices = []
 
-        for i, (inputs, targets, fname) in enumerate(progress_bar, start=1):
+        for i, (inputs, targets, fname) in enumerate(progress_bar):
             c_model.zero_grad()
 
             inputs = Variable(inputs).cuda()
@@ -173,12 +173,12 @@ def main(batch_size, n_epochs, lr, beta1, decay, train_fpath, val_fpath, _run):
         writer.add_scalar(s_losses_joint_tag, mean_s_loss_joint, epoch)
         writer.add_scalar(dice_loss_tag, mean_dice, epoch)
 
-        if epoch % 10 == 0:
+        if epoch == 1 or epoch % 10 == 0:
             progress_bar = tqdm(dataloaders["validation"], desc="Epoch {} - validation".format(epoch))
 
             s_model.eval()
             IoUs, dices = [], []
-            for i, (inputs, targets, fname) in enumerate(progress_bar, start=1):
+            for i, (inputs, targets, fname) in enumerate(progress_bar):
                 inputs = Variable(inputs).cuda()
                 targets = Variable(targets).cuda()
 
