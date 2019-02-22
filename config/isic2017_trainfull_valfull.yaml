@@ -1,5 +1,5 @@
 batch_size: 25
-n_epochs: 500
+n_epochs: 300
 lr: 0.003
 beta1: 0.5
 decay: 0.9

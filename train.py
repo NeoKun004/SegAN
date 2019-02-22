@@ -93,7 +93,7 @@ def main(batch_size, n_epochs, lr, beta1, decay, train_fpath, val_fpath, _run):
         c_losses = []
         dices = []
 
-        for i, (inputs, targets, fname) in enumerate(progress_bar):
+        for i, (inputs, targets, fname) in enumerate(progress_bar, start=1):
             c_model.zero_grad()
 
             inputs = Variable(inputs).cuda()
@@ -178,7 +178,7 @@ def main(batch_size, n_epochs, lr, beta1, decay, train_fpath, val_fpath, _run):
 
             s_model.eval()
             IoUs, dices = [], []
-            for i, (inputs, targets, fname) in enumerate(progress_bar):
+            for i, (inputs, targets, fname) in enumerate(progress_bar, start=1):
                 inputs = Variable(inputs).cuda()
                 targets = Variable(targets).cuda()
 
