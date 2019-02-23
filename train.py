@@ -72,10 +72,7 @@ def main(batch_size, n_epochs, lr, beta1, decay, train_fpath, val_fpath, _run):
     s_optimizer = optim.Adam(s_model.parameters(), lr=lr, betas=(beta1, 0.999))
     c_optimizer = optim.Adam(c_model.parameters(), lr=lr, betas=(beta1, 0.999))
 
-    augmetation = [RandomHorizontalFlip(p=1.0),
-                   RandomVerticalFlip(p=1.0)]
-
-    train_dataset = SegANDataset(train_fpath, augmetation)
+    train_dataset = SegANDataset(train_fpath)
     val_dataset = SegANDataset(val_fpath)
 
     dataloaders = {
